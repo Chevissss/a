@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Menú Principal -->
+    <menuitem id="menu_sports_booking_root"
+              name="Reservas Deportivas"
+              web_icon="sports_booking,static/description/icon.png"
+              sequence="10"/>
+
+    <!-- Menú Reservas -->
+    <menuitem id="menu_sports_booking"
+              name="Reservas"
+              parent="menu_sports_booking_root"
+              sequence="10"/>
+
+    <menuitem id="menu_sports_booking_all"
+              name="Todas las Reservas"
+              parent="menu_sports_booking"
+              action="action_sports_booking"
+              sequence="10"/>
+
+    <!-- Menú Configuración -->
+    <menuitem id="menu_sports_configuration"
+              name="Configuración"
+              parent="menu_sports_booking_root"
+              sequence="90"
+              groups="sports_booking.group_booking_admin"/>
+
+    <menuitem id="menu_sports_fields"
+              name="Canchas"
+              parent="menu_sports_configuration"
+              action="action_sports_field"
+              sequence="10"
+              groups="sports_booking.group_booking_admin"/>
+
+</odoo>

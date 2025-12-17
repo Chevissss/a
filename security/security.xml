@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Categoría del módulo -->
+    <record id="module_category_sports_booking" model="ir.module.category">
+        <field name="name">Reservación de Canchas</field>
+        <field name="sequence">50</field>
+    </record>
+
+    <!-- Grupo: Usuario Externo (Portal) -->
+    <record id="group_booking_portal_user" model="res.groups">
+        <field name="name">Usuario Portal</field>
+        <field name="category_id" ref="module_category_sports_booking"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_portal'))]"/>
+    </record>
+
+    <!-- Grupo: Staff -->
+    <record id="group_booking_staff" model="res.groups">
+        <field name="name">Staff</field>
+        <field name="category_id" ref="module_category_sports_booking"/>
+        <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+    </record>
+
+    <!-- Group: Administrador -->
+    <record id="group_booking_admin" model="res.groups">
+        <field name="name">Administrador</field>
+        <field name="category_id" ref="module_category_sports_booking"/>
+        <field name="implied_ids" eval="[(4, ref('group_booking_staff'))]"/>
+    </record>
+
+    <!-- Reglas de acceso por registro -->
+    
+    <!-- Staff solo ve sus propias reservas creadas -->
+    <record id="booking_staff_rule" model="ir.rule">
+        <field name="name">Staff: Solo sus reservas</field>
+        <field name="model_id" ref="model_sports_booking"/>
+        <field name="domain_force">[('create_uid', '=', user.id)]</field>
+        <field name="groups" eval="[(4, ref('group_booking_staff'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+    <!-- Admin ve todas las reservas -->
+    <record id="booking_admin_rule" model="ir.rule">
+        <field name="name">Admin: Todas las reservas</field>
+        <field name="model_id" ref="model_sports_booking"/>
+        <field name="domain_force">[(1, '=', 1)]</field>
+        <field name="groups" eval="[(4, ref('group_booking_admin'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="1"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="1"/>
+    </record>
+
+    <!-- Usuario Portal solo ve sus propias reservas -->
+    <record id="booking_portal_rule" model="ir.rule">
+        <field name="name">Portal: Sus reservas</field>
+        <field name="model_id" ref="model_sports_booking"/>
+        <field name="domain_force">[('partner_id', '=', user.partner_id.id)]</field>
+        <field name="groups" eval="[(4, ref('group_booking_portal_user'))]"/>
+        <field name="perm_read" eval="1"/>
+        <field name="perm_write" eval="0"/>
+        <field name="perm_create" eval="1"/>
+        <field name="perm_unlink" eval="0"/>
+    </record>
+
+</odoo>

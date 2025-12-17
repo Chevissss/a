@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vista Tree -->
+    <record id="view_sports_booking_tree" model="ir.ui.view">
+        <field name="name">sports.booking.tree</field>
+        <field name="model">sports.booking</field>
+        <field name="arch" type="xml">
+            <tree string="Reservas" 
+                  decoration-success="state == 'confirmed'"
+                  decoration-info="state == 'draft'"
+                  decoration-warning="state == 'in_progress'"
+                  decoration-muted="state == 'cancelled'">
+                <field name="name"/>
+                <field name="booking_date"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="field_id"/>
+                <field name="partner_id"/>
+                <field name="sport_type"/>
+                <field name="duration"/>
+                <field name="total_amount" widget="monetary"/>
+                <field name="payment_status"/>
+                <field name="state" widget="badge" 
+                       decoration-success="state == 'confirmed'"
+                       decoration-info="state == 'draft'"
+                       decoration-warning="state == 'in_progress'"
+                       decoration-muted="state == 'cancelled'"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista Form -->
+    <record id="view_sports_booking_form" model="ir.ui.view">
+        <field name="name">sports.booking.form</field>
+        <field name="model">sports.booking</field>
+        <field name="arch" type="xml">
+            <form string="Reserva">
+                <header>
+                    <button name="action_confirm" string="Confirmar" type="object" 
+                            class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_start" string="Iniciar" type="object" 
+                            class="oe_highlight" invisible="state != 'confirmed'"/>
+                    <button name="action_complete" string="Completar" type="object" 
+                            invisible="state != 'in_progress'"/>
+                    <button name="action_cancel" string="Cancelar" type="object" 
+                            invisible="state in ['cancelled', 'completed']"/>
+                    <button name="action_set_to_draft" string="Reactivar" type="object" 
+                            invisible="state != 'cancelled'"
+                            groups="sports_booking.group_booking_admin"/>
+                    <field name="state" widget="statusbar" 
+                           statusbar_visible="draft,confirmed,in_progress,completed"/>
+                </header>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_confirm" type="object" 
+                                class="oe_stat_button" icon="fa-check-circle"
+                                invisible="state != 'draft'">
+                            <div class="o_field_widget o_stat_info">
+                                <span class="o_stat_text">Confirmar</span>
+                            </div>
+                        </button>
+                    </div>
+                    <div class="oe_title">
+                        <label for="name" class="oe_edit_only"/>
+                        <h1>
+                            <field name="name" readonly="1"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group name="booking_info" string="Información de Reserva">
+                            <field name="field_id" options="{'no_create': True}"/>
+                            <field name="sport_type" readonly="1"/>
+                            <field name="booking_date"/>
+                            <field name="start_time" widget="float_time"/>
+                            <field name="end_time" widget="float_time"/>
+                            <field name="duration" readonly="1"/>
+                        </group>
+                        <group name="customer_info" string="Información del Cliente">
+                            <field name="partner_id" options="{'no_create_edit': True}"/>
+                            <field name="phone" readonly="1"/>
+                            <field name="email" readonly="1"/>
+                            <field name="participants"/>
+                        </group>
+                    </group>
+                    <group>
+                        <group name="financial" string="Información Financiera">
+                            <field name="hourly_rate" readonly="1" widget="monetary"/>
+                            <field name="total_amount" readonly="1" widget="monetary"/>
+                            <field name="payment_status"/>
+                        </group>
+                    </group>
+                    <group>
+                        <field name="notes" placeholder="Notas adicionales sobre la reserva..."/>
+                    </group>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="activity_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+
+    <!-- Vista Calendar -->
+    <record id="view_sports_booking_calendar" model="ir.ui.view">
+        <field name="name">sports.booking.calendar</field>
+        <field name="model">sports.booking</field>
+        <field name="arch" type="xml">
+            <calendar string="Calendario de Reservas" 
+                      date_start="booking_date" 
+                      color="field_id"
+                      quick_create="0"
+                      event_open_popup="1"
+                      mode="month">
+                <field name="partner_id"/>
+                <field name="field_id"/>
+                <field name="start_time" widget="float_time"/>
+                <field name="end_time" widget="float_time"/>
+                <field name="state"/>
+            </calendar>
+        </field>
+    </record>
+
+    <!-- Vista Pivot -->
+    <record id="view_sports_booking_pivot" model="ir.ui.view">
+        <field name="name">sports.booking.pivot</field>
+        <field name="model">sports.booking</field>
+        <field name="arch" type="xml">
+            <pivot string="Análisis de Reservas">
+                <field name="booking_date" type="row" interval="month"/>
+                <field name="field_id" type="col"/>
+                <field name="total_amount" type="measure"/>
+                <field name="duration" type="measure"/>
+            </pivot>
+        </field>
+    </record>
+
+    <!-- Vista Graph -->
+    <record id="view_sports_booking_graph" model="ir.ui.view">
+        <field name="name">sports.booking.graph</field>
+        <field name="model">sports.booking</field>
+        <field name="arch" type="xml">
+            <graph string="Gráfico de Reservas" type="bar">
+                <field name="booking_date" interval="month"/>
+                <field name="total_amount" type="measure"/>
+            </graph>
+        </field>
+    </record>
+
+    <!-- Vista Search -->
+    <record id="view_sports_booking_search" model="ir.ui.view">
+        <field name="name">sports.booking.search</field>
+        <field name="model">sports.booking</field>
+        <field name="arch" type="xml">
+            <search string="Buscar Reservas">
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="field_id"/>
+                <field name="booking_date"/>
+                <filter string="Borradores" name="draft" domain="[('state', '=', 'draft')]"/>
+                <filter string="Confirmadas" name="confirmed" domain="[('state', '=', 'confirmed')]"/>
+                <filter string="En Progreso" name="in_progress" domain="[('state', '=', 'in_progress')]"/>
+                <filter string="Completadas" name="completed" domain="[('state', '=', 'completed')]"/>
+                <filter string="Canceladas" name="cancelled" domain="[('state', '=', 'cancelled')]"/>
+                <separator/>
+                <filter string="Hoy" name="today" 
+                        domain="[('booking_date', '=', context_today().strftime('%Y-%m-%d'))]"/>
+                <filter string="Esta Semana" name="this_week" 
+                        domain="[('booking_date', '&gt;=', (context_today() - datetime.timedelta(days=context_today().weekday())).strftime('%Y-%m-%d')),
+                                 ('booking_date', '&lt;=', (context_today() + datetime.timedelta(days=6-context_today().weekday())).strftime('%Y-%m-%d'))]"/>
+                <filter string="Este Mes" name="this_month" 
+                        domain="[('booking_date', '&gt;=', context_today().strftime('%Y-%m-01'))]"/>
+                <separator/>
+                <filter string="Pago Pendiente" name="payment_pending" 
+                        domain="[('payment_status', '=', 'pending')]"/>
+                <filter string="Pagado" name="payment_paid" 
+                        domain="[('payment_status', '=', 'paid')]"/>
+                <separator/>
+                <group expand="0" string="Agrupar Por">
+                    <filter string="Cancha" name="group_field" 
+                            context="{'group_by': 'field_id'}"/>
+                    <filter string="Cliente" name="group_partner" 
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Estado" name="group_state" 
+                            context="{'group_by': 'state'}"/>
+                    <filter string="Fecha" name="group_date" 
+                            context="{'group_by': 'booking_date'}"/>
+                    <filter string="Deporte" name="group_sport" 
+                            context="{'group_by': 'sport_type'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <!-- Acción -->
+    <record id="action_sports_booking" model="ir.actions.act_window">
+        <field name="name">Reservas</field>
+        <field name="res_model">sports.booking</field>
+        <field name="view_mode">tree,form,calendar,pivot,graph</field>
+        <field name="context">{}</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Crea una nueva reserva
+            </p>
+            <p>
+                Gestiona las reservas de las canchas deportivas desde aquí.
+            </p>
+        </field>
+    </record>
+
+</odoo>
