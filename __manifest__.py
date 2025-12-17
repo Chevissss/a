@@ -18,6 +18,7 @@
     'data': [
         'security/security.xml',
         'security/ir.model.access.csv',
+        'security/ir_rules.xml',
         'data/sequences.xml',
         'views/sports_field_views.xml',
         'views/booking_views.xml',
